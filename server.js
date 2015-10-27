@@ -3,19 +3,17 @@
  * Express must be installed for this sample to work
  */
 
-var tropowebapi = require('./lib/tropo-webapi');
+var tropowebapi = require('tropo-webapi');
 var express = require('express');
-var bodyParser = require('body-parser')
-var app = express();
-var request = require('request');
+var app = express.createServer();
 
-app.use(bodyParser.json()); // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-
- app.get('/', function (req, res) {
-    res.send('Hello from Cisco Shipped!');
+/**
+ * Required to process the HTTP body
+ * req.body has the Object while req.rawBody has the JSON string
+ */
+app.configure(function(){
+	app.use(express.bodyDecoder());
 });
-	 
 
 app.post('/', function(req, res){
 	// Create a new instance of the TropoWebAPI object.
@@ -36,33 +34,12 @@ app.post('/', function(req, res){
     res.send(tropowebapi.TropoJSON(tropo));
 });
 
-getWeather=function(zip, callback){
-	request('http://api.openweathermap.org/data/2.5/weather?zip='+zip+'&appid=a8f81765ac74e18e357c9496ac295aad', function (error, response, body) {
-	if (!error && response.statusCode == 200) {
-    callback(body)
-	 
-	}});
+app.post('/answer', function(req, res){
+	// Create a new instance of the TropoWebAPI object.
+	var tropo = new tropowebapi.TropoWebAPI();
+	tropo.say("Your zip code is " + req.body['result']['actions']['interpretation']);
 	
-};
-
-app.post('/answer', function(req, res){	
-	 var tropo = new tropowebapi.TropoWebAPI();
-	//console.log(req.body['result']['actions']['interpretation'])
-	var zip=req.body.result.actions.interpretation;
-	tropo.say("Fetching weather information for your zip code "+ zip);
-	getWeather(zip,function(response){
-		var j= JSON.parse(response)
-			if(j.cod==200){
-				console.log(j.weather[0].description);
-				tropo.say("Weather is ! "+j.weather[0].description);
-			}
-			else{
-				console.log(j.message);
-				tropo.say( "Oops ! "+ j.message);
-			}	
-		 res.send(tropowebapi.TropoJSON(j));
-	});
-	
+	res.send(tropowebapi.TropoJSON(tropo));
 });
 
 app.listen(3000);
