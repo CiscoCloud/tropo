@@ -30,10 +30,11 @@ app.post('/', function(req, res){
 	// Action classes can be passes as parameters to TropoWebAPI class methods.
 	// use the ask method https://www.tropo.com/docs/webapi/ask.htm
 	tropo.ask(choices, 3, false, null, "foo", null, true, say, 5, null);
+	 
 	
 	// use the on method https://www.tropo.com/docs/webapi/on.htm
-	tropo.on("continue", "/answer", "/answer", true);	
-	
+	tropo.on("continue", null, "/answer", true);
+	 
     res.send(tropowebapi.TropoJSON(tropo));
 });
 
@@ -47,11 +48,8 @@ getWeather=function(zip, callback){
 };
 
 app.post('/answer', function(req, res){	
-
 	 var tropo = new tropowebapi.TropoWebAPI();
-	 tropo.say("process weather"); 
-	 
-	 
+	//console.log(req.body['result']['actions']['interpretation'])
 	var zip=req.body.result.actions.interpretation;
 	tropo.say("Fetching weather information for your zip code "+ zip);
 	getWeather(zip,function(response){
@@ -64,7 +62,7 @@ app.post('/answer', function(req, res){
 				console.log(j.message);
 				tropo.say( "Oops ! "+ j.message);
 			}	
-		 res.send(tropowebapi.TropoJSON(j));
+		 res.send(tropowebapi.TropoJSON(tropo));
 	});
 	
 });
