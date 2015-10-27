@@ -49,6 +49,7 @@ app.post('/answer', function(req, res){
 	 var tropo = new tropowebapi.TropoWebAPI();
 	//console.log(req.body['result']['actions']['interpretation'])
 	var zip=req.body.result.actions.interpretation;
+	tropo.say("Fetching weather information for your zip code "+ zip);
 	getWeather(zip,function(response){
 		var j= JSON.parse(response)
 			if(j.cod==200){
