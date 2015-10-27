@@ -47,9 +47,11 @@ getWeather=function(zip, callback){
 };
 
 app.post('/answer', function(req, res){	
-tropo.say("process weather"); 
+
 	 var tropo = new tropowebapi.TropoWebAPI();
-	//console.log(req.body['result']['actions']['interpretation'])
+	 tropo.say("process weather"); 
+	 
+	 
 	var zip=req.body.result.actions.interpretation;
 	tropo.say("Fetching weather information for your zip code "+ zip);
 	getWeather(zip,function(response){
