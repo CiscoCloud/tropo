@@ -69,5 +69,5 @@ app.post('/answer', function(req, res){
 	
 });
 
-app.listen(3300);
+app.listen(3000);
 console.log('Server running on http://0.0.0.0:3000/');
