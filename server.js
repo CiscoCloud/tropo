@@ -55,8 +55,10 @@ app.post('/answer', function(req, res){
 	getWeather(zip,function(response){
 		var j= JSON.parse(response)
 			if(j.cod==200){
-				console.log(j.weather[0].description);
-				tropo.say("Weather is ! "+j.weather[0].description);
+				
+				var wtr= "Weather for "+j.name+" is ! clouds " +j.weather[0].description+ ", Temperature " +j.main.temp +" kelvin, Pressure " +j.main.pressure +", Humidity " +j.main.humidity +"%"
+				console.log(wtr);
+				tropo.say(wtr);
 			}
 			else{
 				console.log(j.message);
@@ -67,5 +69,5 @@ app.post('/answer', function(req, res){
 	
 });
 
-app.listen(3000);
+app.listen(3300);
 console.log('Server running on http://0.0.0.0:3000/');
