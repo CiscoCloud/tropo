@@ -3,7 +3,7 @@
  * Express must be installed for this sample to work
  */
 
-var tropowebapi = require('tropo-webapi');
+var tropowebapi = require('./lib/tropo-webapi');
 var express = require('express');
 var app = express.createServer();
 
