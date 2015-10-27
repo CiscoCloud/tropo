@@ -31,12 +31,9 @@ app.post('/', function(req, res){
 	// use the ask method https://www.tropo.com/docs/webapi/ask.htm
 	tropo.ask(choices, 3, false, null, "foo", null, true, say, 5, null);
 	
-	tropo.say("process 1"); 
-	
 	// use the on method https://www.tropo.com/docs/webapi/on.htm
-	tropo.on("continue", null, "/answer", true);
+	tropo.on("continue", null, "/answer", true);	
 	
-	tropo.say("process 2"); 
     res.send(tropowebapi.TropoJSON(tropo));
 });
 
@@ -50,6 +47,7 @@ getWeather=function(zip, callback){
 };
 
 app.post('/answer', function(req, res){	
+tropo.say("process weather"); 
 	 var tropo = new tropowebapi.TropoWebAPI();
 	//console.log(req.body['result']['actions']['interpretation'])
 	var zip=req.body.result.actions.interpretation;
