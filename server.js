@@ -24,7 +24,7 @@ app.post('/', function(req, res){
 	 
 	tropo.say("Welcome to Shipped Tropo Web API demo.");
 
-	var say = new Say("Press 1. For weather, Press 2. For contact search.");
+	var say = new Say("For weather, press 1. For contact search, press 2.");
 	var choices = new Choices("[1 DIGITS]");
 	    
 	tropo.ask(choices, 3, false, null, "foo", null, true, say, 5, null);	
@@ -51,9 +51,45 @@ app.post('/selection', function(req, res) {
  });
 	
 	
-attendent=function(choice,res, callback){
+attendent = function(choice,res, callback){
 	var tropo = new tropowebapi.TropoWebAPI();	
+	listNames= function ( theContacts )
+	{
+	  var s = '';
+	  for( var contact in theContacts )
+	  {
+		if (s != '') { s = s + ", " };
+		s = s + contact;
+	  }
+	  return s;
+	}
+
+	// -----------
+	// turn the contacts into a comma separated list of options for each contact (simple grammar)
+
+	listOptions=function ( theContacts )
+	{
+	  var s ='';
+	  for( var contact in theContacts )
+	  {
+		if (s != '') { s = s + ", " };
+		s = s + contact + " (" + theContacts[ contact ].nameChoices + ")";
+	  }
+	  return s;
+	}
+
+	// -----------
+	// start
+	// -----------
+
+	// define the list of contacts
+
+	var contacts = { 	"jason": { nameChoices: "Jason, Jason Goecke", number: "14075551212" },
+						"adam" : { nameChoices: "Adam, Adam Kalsey",    number: "14075551313" },
+						"jose" : { nameChoices: "Jose, Jose de Castro",    number: "14075551414" } };
+
 	tropo.say("Searching for contact.");
+	tropo.say("Who would you like to call?  Just say " + listNames( contacts ));
 				tropo.hangup(); 
 				res.send(tropowebapi.TropoJSON(tropo));
 	callback();
