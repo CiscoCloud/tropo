@@ -38,14 +38,29 @@ app.post('/selection', function(req, res) {
 	  
 	var tropo = new tropowebapi.TropoWebAPI();	
 	var choice=req.body.result.actions.interpretation;	 
-	tropo.say("Your selection was, " +  choice + ". Goodbye.");
-	tropo.hangup(); 
-	res.send(tropowebapi.TropoJSON(tropo));
- 
+	//tropo.say("Your selection was, " +  choice + ". Goodbye.");
+	
+	if (choice == "1"){
+		weatherReport(res,function(){});
+	}else if (choice == "2"){
+		attendent(choice,res, function(){
+				
+		})
+	}
+	//res.send(tropowebapi.TropoJSON(tropo));
  });
-		 
-		 
-weatherReport=function(nil,callback){
+	
+	
+attendent=function(choice,res, callback){
+	var tropo = new tropowebapi.TropoWebAPI();	
+	tropo.say("Searching for contact.");
+				tropo.hangup(); 
+				res.send(tropowebapi.TropoJSON(tropo));
+	callback();
+};
+
+	
+weatherReport=function(res,callback){
 	var tropo = new tropowebapi.TropoWebAPI();
 // Demonstrates how to use the base Tropo action classes.
 	var say = new Say("Please enter your 5 digit zip code.");
@@ -60,6 +75,7 @@ weatherReport=function(nil,callback){
 	tropo.on("continue", null, "/answer", true);
 	 
     res.send(tropowebapi.TropoJSON(tropo));	
+	callback();
 };
 
 getWeather=function(zip, callback){
