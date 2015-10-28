@@ -25,7 +25,7 @@ app.post('/', function(req, res){
 	tropo.say("Welcome to Shipped Tropo Web API demo.");
 
 	var say = new Say("For weather, press 1. For contact search, press 2.");
-	var choices = new Choices([1,2]);
+	var choices = new Choices("[1,2]");
 	    
 	tropo.ask(choices, 3, false, null, "foo", null, true, say, 5, null);	
 	tropo.on("continue", null, "/selection", true);	
@@ -38,7 +38,7 @@ app.post('/selection', function(req, res) {
 	  
 	var tropo = new tropowebapi.TropoWebAPI();	
 	var choice=req.body.result.actions.interpretation;	 
-	//tropo.say("Your selection was, " +  choice + ". Goodbye.");
+	tropo.say("Your choice is invalid.");
 	
 	if (choice == "1"){
 		weatherReport(res,function(){});
@@ -46,8 +46,9 @@ app.post('/selection', function(req, res) {
 		attendent(choice,res, function(){
 				
 		})
+	}else{
+	res.send(tropowebapi.TropoJSON(tropo));
 	}
-	//res.send(tropowebapi.TropoJSON(tropo));
  });
 	
 // define the list of contacts
