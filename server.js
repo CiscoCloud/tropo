@@ -50,7 +50,11 @@ app.post('/selection', function(req, res) {
 	//res.send(tropowebapi.TropoJSON(tropo));
  });
 	
-	
+// define the list of contacts
+
+var contacts = { 	"jason": { nameChoices: "Jason, Jason Goecke", number: "14075551212" },
+					"adam" : { nameChoices: "Adam, Adam Kalsey",    number: "14075551313" },
+					"jose" : { nameChoices: "Jose, Jose de Castro",    number: "14075551414" } };
 attendent = function(choice,res, callback){
 	var tropo = new tropowebapi.TropoWebAPI();	
 	listNames= function ( theContacts )
@@ -78,23 +82,39 @@ attendent = function(choice,res, callback){
 	  return s;
 	}
 
-	// -----------
-	// start
-	// -----------
 
-	// define the list of contacts
-
-	var contacts = { 	"jason": { nameChoices: "Jason, Jason Goecke", number: "14075551212" },
-						"adam" : { nameChoices: "Adam, Adam Kalsey",    number: "14075551313" },
-						"jose" : { nameChoices: "Jose, Jose de Castro",    number: "14075551414" } };
 
 	tropo.say("Searching for contact.");
-	tropo.say("Who would you like to call?  Just say " + listNames( contacts ));
-				tropo.hangup(); 
-				res.send(tropowebapi.TropoJSON(tropo));
+	
+	say = new Say("Who would you like to call?  Just say " + listNames( contacts ));
+	var choices = new Choices(listOptions( contacts ));
+	tropo.ask(choices, 3, false, null, "foo", null, true, say, 5, null);
+	tropo.on("continue", null, "/contact", true);
+	tropo.hangup(); 
+	res.send(tropowebapi.TropoJSON(tropo));
 	callback();
 };
 
+app.post('/contact', function(req, res){	
+	 
+	var tropo = new tropowebapi.TropoWebAPI();
+	 
+	var contact=req.body.result.actions.interpretation;
+	//var contact="adam";
+	tropo.say( "ok, you said " + contact +" .");	
+	var c= contacts[contact];
+	if (c == undefined){
+		tropo.say("Could not able to find contact information for contact "+contact+", Please try again." );
+	}else{
+		 tropo.say("Please hold while I transfer you." );
+		 tropo.transfer(contacts[contact].number, false, null, null, {'x-caller-name' : contact}, null, null, true, '#', 60.0);
+	}
+	
+	
+	tropo.say( "Goodbye !");
+	 res.send(tropowebapi.TropoJSON(tropo));
+	
+});
 	
 weatherReport=function(res,callback){
 	var tropo = new tropowebapi.TropoWebAPI();
