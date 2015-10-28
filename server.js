@@ -24,7 +24,7 @@ app.post('/', function(req, res){
 	 
 	tropo.say("Welcome to Shipped Tropo Web API demo.");
 
-	var say = new Say("For weather, press 1. For contact search, press 2.");
+	var say = new Say(" For weather, press 1. For contact search, press 2.");
 	var choices = new Choices("1,2");
 	    
 	tropo.ask(choices, 3, false, null, "foo", null, true, say, 5, null);	
@@ -101,7 +101,7 @@ attendent = function(choice,res, callback){
 	var choices = new Choices(listOptions( contacts ));	 
 	tropo.ask(choices, 3, false, null, "foo", null, true, say, 5, null);
 	tropo.on("continue", null, "/contact", true);
-	tropo.hangup(); 
+	
 	res.send(tropowebapi.TropoJSON(tropo));
 	callback();
 };
@@ -158,12 +158,12 @@ app.post('/answer', function(req, res){
 	 var tropo = new tropowebapi.TropoWebAPI();
 	//console.log(req.body['result']['actions']['interpretation'])
 	var zip=req.body.result.actions.interpretation;
-	tropo.say("Fetching weather information for your zip code "+ zip);
+	tropo.say("Fetching weather information for your zip code "+ zip +".");
 	getWeather(zip,function(response){
 		var j= JSON.parse(response)
 			if(j.cod==200){
 				
-				var wtr= "Weather for "+j.name+" is ! clouds " +j.weather[0].description+ ", Temperature " +j.main.temp +" kelvin, Pressure " +j.main.pressure +", Humidity " +j.main.humidity +"%"
+				var wtr= " Weather for "+j.name+" is ! clouds " +j.weather[0].description+ ", Temperature " +j.main.temp +" kelvin, Pressure " +j.main.pressure +", Humidity " +j.main.humidity +"%"
 				console.log(wtr);
 				tropo.say(wtr);
 				tropo.say( "Goodbye !");
