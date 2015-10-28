@@ -25,7 +25,7 @@ app.post('/', function(req, res){
 	tropo.say("Welcome to Shipped Tropo Web API demo.");
 
 	var say = new Say("For weather, press 1. For contact search, press 2.");
-	var choices = new Choices("[1 DIGITS]");
+	var choices = new Choices([1,2]);
 	    
 	tropo.ask(choices, 3, false, null, "foo", null, true, say, 5, null);	
 	tropo.on("continue", null, "/selection", true);	
@@ -84,10 +84,20 @@ attendent = function(choice,res, callback){
 
 
 
-	tropo.say("Searching for contact.");
+	tropo.say("Searching for contacts.");
 	
-	say = new Say("Who would you like to call?  Just say " + listNames( contacts ));
-	var choices = new Choices(listOptions( contacts ));
+	//Create event objects
+	var e1 = {"value":"Sorry, I did not hear anything.","event":"timeout"};
+    var e2 = {"value":"Sorry, that was not a valid option.","event":"nomatch:1"};
+    var e3 = {"value":"Nope, still not a valid response","event":"nomatch:2"};
+    
+    //Create an array of all events
+    var e = new Array(e1,e2,e3);
+       
+	// Demonstrates how to use the base Tropo action classes.
+	var say = new Say("Who would you like to call?  Just say " + listNames( contacts ), null, e, null, null, null);
+		 
+	var choices = new Choices(listOptions( contacts ));	 
 	tropo.ask(choices, 3, false, null, "foo", null, true, say, 5, null);
 	tropo.on("continue", null, "/contact", true);
 	tropo.hangup(); 
