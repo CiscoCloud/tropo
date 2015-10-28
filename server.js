@@ -25,7 +25,7 @@ app.post('/', function(req, res){
 	tropo.say("Welcome to Shipped Tropo Web API demo.");
 
 	var say = new Say("For weather, press 1. For contact search, press 2.");
-	var choices = new Choices("[1,2]");
+	var choices = new Choices("1,2");
 	    
 	tropo.ask(choices, 3, false, null, "foo", null, true, say, 5, null);	
 	tropo.on("continue", null, "/selection", true);	
