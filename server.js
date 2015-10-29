@@ -68,10 +68,7 @@ attendent = function(choice,res, callback){
 	  }
 	  return s;
 	}
-
-	// -----------
-	// turn the contacts into a comma separated list of options for each contact (simple grammar)
-
+ 
 	listOptions=function ( theContacts )
 	{
 	  var s ='';
@@ -111,14 +108,18 @@ app.post('/contact', function(req, res){
 	var tropo = new tropowebapi.TropoWebAPI();
 	 
 	var contact=req.body.result.actions.interpretation;
-	//var contact="adam";
+	
+	console.log("----------------------")
+	console.log(contact)
+	console.log("----------------------")
 	tropo.say( "ok, you said " + contact +" .");	
+	
 	var c= contacts[contact];
 	if (c == undefined){
 		tropo.say("Could not able to find contact information for contact "+contact+", Please try again." );
 	}else{
 		 tropo.say("Please hold while I transfer you." );
-		 tropo.transfer(contacts[contact].number, false, null, null, {'x-caller-name' : contact}, null, null, true, '#', 60.0);
+		 tropo.transfer(c.number, false, null, null, {'x-caller-name' : contact}, null, null, true, '#', 60.0);
 	}
 	
 	
