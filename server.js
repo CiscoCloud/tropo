@@ -128,8 +128,12 @@ app.post('/contact', function(req, res){
 	}else{
 		 tropo.say("Please hold while I transfer you. Call forwarding will only works if your account is activated for call forwarding feature." );
 		 
+		//added ring while answered by other person.
+		 var say1= new Say("http://www.phono.com/audio/holdmusic.mp3");
+		 var on = new On("ring", null, null, false, say1);
+		 
 		//transfer call to the requested contact.
-		tropo.transfer(c.number, false, null, null, {'x-caller-name' : contact}, null, null, true, '#', 60.0);
+		tropo.transfer(c.number, false, null, null, {'x-caller-name' : contact}, null, on, true, '#', 60.0);
 		 //sms
 		 //tropo.call(c.number, null, null, null, null, null, "SMS", null, null, null);
 
