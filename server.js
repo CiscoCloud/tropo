@@ -37,6 +37,8 @@ app.post('/', function(req, res){
 app.post('/selection', function(req, res) {
 	  
 	var tropo = new tropowebapi.TropoWebAPI();	
+	console.log("--selection --");
+	console.log(req.body.result);
 	var choice=req.body.result.actions.interpretation;	 
 	tropo.say("Your choice is invalid.");
 	
@@ -53,9 +55,9 @@ app.post('/selection', function(req, res) {
 	
 // define the list of contacts
 
-var contacts = { 	"jason": { nameChoices: "Jason, Jason Goecke", number: "14075551212" },
-					"adam" : { nameChoices: "Adam, Adam Kalsey",    number: "14075551313" },
-					"jose" : { nameChoices: "Jose, Jose de Castro",    number: "14075551414" } };
+var contacts = { 	"jason": { nameChoices: "Jason, Jason Goecke", number: 	"3022662842" },
+					"adam" : { nameChoices: "Adam, Adam Kalsey",    number: "3022662842" },
+					"jose" : { nameChoices: "Jose, Jose de Castro",    number: "13022662842" } };
 attendent = function(choice,res, callback){
 	var tropo = new tropowebapi.TropoWebAPI();	
 	listNames= function ( theContacts )
