@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x
     res.send('Hello from Cisco Shipped!');
 });
 	 
-
+//Main menu
 app.post('/', function(req, res){
 	
 	// Create a new instance of the TropoWebAPI object.
@@ -122,7 +122,10 @@ app.post('/contact', function(req, res){
 		tropo.say("Could not able to find contact information for contact "+contact+", Please try again." );
 	}else{
 		 tropo.say("Please hold while I transfer you." );
-		 tropo.transfer(c.number, false, null, null, {'x-caller-name' : contact}, null, null, true, '#', 60.0);
+		// tropo.transfer(c.number, false, null, null, {'x-caller-name' : contact}, null, null, true, '#', 60.0);
+		 //sms
+		 tropo.call(c.number, null, null, null, null, null, "SMS", null, null, null);
+
 	}
 	
 	
