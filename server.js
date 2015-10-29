@@ -114,6 +114,7 @@ app.post('/contact', function(req, res){
 	console.log("----------------------")
 	tropo.say( "ok, you said " + contact +" .");	
 	
+	contact=contact.toLowerCase()
 	var c= contacts[contact];
 	if (c == undefined){
 		tropo.say("Could not able to find contact information for contact "+contact+", Please try again." );
