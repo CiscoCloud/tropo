@@ -25,7 +25,7 @@ app.post('/', function(req, res){
 	tropo.say("Welcome to Shipped Tropo Web API demo.");
 	
 	// use the ask method https://www.tropo.com/docs/webapi/say.htm	 
-	var say = new Say(" For weather, press 1. For contact search, press 2.");
+	var say = new Say(" . For weather, press 1. For contact search, press 2.");
 	var choices = new Choices("1,2");
 	 
 	// Action classes can be passes as parameters to TropoWebAPI class methods.
@@ -62,6 +62,29 @@ app.post('/selection', function(req, res) {
 var contacts = { 	"jason": { nameChoices: "Jason, Jason Goecke", number: 	"3022662842" },
 					"adam" : { nameChoices: "Adam, Adam Kalsey",    number: "3022662842" },
 					"jose" : { nameChoices: "Jose, Jose de Castro",    number: "13022662842" } };
+
+//helper func
+//return string with , seperated contacts
+listNames= function ( theContacts ){
+  var s = '';
+  for( var contact in theContacts )
+  {
+	if (s != '') { s = s + ", " };
+	s = s + contact;
+  }
+  return s;
+};
+
+//for Nomae choice object
+listOptions=function ( theContacts ){
+  var s ='';
+  for( var contact in theContacts )
+  {
+	if (s != '') { s = s + ", " };
+	s = s + contact + " (" + theContacts[ contact ].nameChoices + ")";
+  }
+  return s;
+};
 					
 attendent = function(choice,res, callback){
 	var tropo = new tropowebapi.TropoWebAPI();
@@ -85,30 +108,7 @@ attendent = function(choice,res, callback){
 	res.send(tropowebapi.TropoJSON(tropo));
 	callback();
 	
-	//helper func
-	//return string with , seperated contacts
-	listNames= function ( theContacts )
-	{
-	  var s = '';
-	  for( var contact in theContacts )
-	  {
-		if (s != '') { s = s + ", " };
-		s = s + contact;
-	  }
-	  return s;
-	}
- 
-	//for Nomae choice object
-	listOptions=function ( theContacts )
-	{
-	  var s ='';
-	  for( var contact in theContacts )
-	  {
-		if (s != '') { s = s + ", " };
-		s = s + contact + " (" + theContacts[ contact ].nameChoices + ")";
-	  }
-	  return s;
-	}
+	
 };
 
 // on contact selection.
