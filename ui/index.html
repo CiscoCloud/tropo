@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Tropo | Cisco</title>
+
+    <meta name="description" content="Source code generated using layoutit.com">
+    <meta name="author" content="LayoutIt!">
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+	<style>
+	#header 
+	{
+		width : 100%;
+		height:100px;
+		background-color : #0076A2;
+	}
+	#header img
+	{
+		margin-top:25px;
+		margin-left:150px;
+	}
+	.container-fluid
+	{
+		width:1100px;
+		padding:20px;
+	}
+	</style>
+  </head>
+  <body>
+	<div id="header">
+		<img src="image/logo.png" />
+	</div>
+	<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="tabbable" id="tabs-82214">
+				<ul class="nav nav-tabs">
+					<li class="active">
+						<a href="#panel-266101" data-toggle="tab">View User</a>
+					</li>
+					<li >
+						<a href="#panel-769963" data-toggle="tab">Add User</a>
+					</li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane active" id="panel-266101">
+						<div class="row">
+		<div class="col-md-12">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>
+							#
+						</th>
+						<th>
+							Name
+						</th>
+						<th>
+							Number
+						</th>
+						<th>
+							Active
+						</th>
+					</tr>
+				</thead>
+				<tbody id="tbody">
+					<tr>
+						<td>
+							1
+						</td>
+						<td>
+							Adam
+						</td>
+						<td>
+							999999999999
+						</td>
+						<td>
+							Default
+						</td>
+					</tr>
+					<tr class="active">
+						<td>
+							2
+						</td>
+						<td>
+							jason
+						</td>
+						<td>
+							999999999999
+						</td>
+						<td>
+							Approved
+						</td>
+					</tr>
+					<tr class="success">
+						<td>
+							3
+						</td>
+						<td>
+							Neelesh
+						</td>
+						<td>
+							999999999999
+						</td>
+						<td>
+							Declined
+						</td>
+					</tr>
+					<tr class="warning">
+						<td>
+							4
+						</td>
+						<td>
+							TB - Monthly
+						</td>
+						<td>
+							999999999999
+						</td>
+						<td>
+							Pending
+						</td>
+					</tr>
+					<tr class="danger">
+						<td>he 
+							5
+						</td>
+						<td>
+							TB - Monthly
+						</td>
+						<td>
+							999999999999
+						</td>
+						<td>
+							Call in to confirm
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+					</div>
+					<div class="tab-pane" id="panel-769963">
+						<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						Add new user to application
+					</h3>
+				</div>
+				<div class="panel-body">
+					<div class="row">
+		<div class="col-md-12">
+			<form role="form">
+				<div class="form-group">
+					 
+					<label for="exampleInputEmail1">
+						Name 
+					</label>
+					<input type="text" class="form-control" id="txtEmail" />
+				</div>
+				<div class="form-group">
+					<label for="exampleInputPassword1">
+						Phone Number
+					</label>
+					<input type="text" class="form-control" id="txtPhone" />
+				</div>
+				
+				<button id="addMe" type="submit" class="btn btn-primary btn-large">
+					Add User
+				</button>
+			</form>
+		</div>
+	</div>
+				</div>
+				<div class="panel-footer">
+					Copyright Cisco @ 2015
+				</div>
+			</div>
+		</div>
+	</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/scripts.js"></script>
+	<script>
+		$(window).load(function() {
+		function returnhtml()
+		{
+			return $('<tr><td>123</td><td>'+$("#txtEmail").val()+'</td><td>'+$("#txtPhone").val()+'</td><td>Active</td></tr>');
+		}
+		
+		$("#addMe").click(function(){
+			//ajax call
+			var datavalue ={};
+			var data ={};
+			data.namechoices = $("#txtEmail").val();
+			data.number = $("#txtPhone").val();
+			
+			datavalue[$("#txtEmail").val()] = data;
+											
+			console.log('datavalue---',datavalue);
+			$.ajax({
+				url: "/contacts",
+				data: datavalue,
+				contentType: "application/json",
+				dataType: 'json',
+				type:"POST",
+				success: function(){
+					alert("save");
+				}
+				});
+		});
+		});
+	</script>
+  </body>
+</html>

@@ -5,10 +5,24 @@
 
 var tropowebapi = require('./lib/tropo-webapi');
 var express = require('express');
-var bodyParser = require('body-parser')
+var serveStatic = require("serve-static");
+var bodyParser = require('body-parser');
 var app = express();
 var request = require('request');
+var jsonfile = require('jsonfile');
+var util = require('util');
+var file = './files/contacts.json';
+var _ = require('underscore');
+var contactsList =[];
+jsonfile.readFile(file, function(err, obj) {
+		console.log('obj',obj);
+		if(obj) {
+				contactsList=JSON.parse(obj);
+		}
+    });
 
+
+app.use(serveStatic(__dirname + "/ui"));
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
@@ -21,7 +35,7 @@ app.post('/', function(req, res){
 	
 	// Create a new instance of the TropoWebAPI object.
 	var tropo = new tropowebapi.TropoWebAPI();
-	 
+	
 	tropo.say("Welcome to Shipped Tropo Web API demo.");
 	
 	// use the ask method https://www.tropo.com/docs/webapi/say.htm	 
@@ -59,10 +73,11 @@ app.post('/selection', function(req, res) {
  });
 	
 // define the list of contacts
-var contacts = { 	"neelesh": { nameChoices: "Neelesh, Nelesh p", number: 	"6697778304" },
-					"adam" : { nameChoices: "Adam, Adam Kalsey",    number: "3022662842" },
-					"jose" : { nameChoices: "Jose, Jose de Castro",    number: "13022662842" } };
-
+var contacts = [	{"neelesh": { namechoices: "Neelesh, Nelesh p", number: 	"6697778304" }},
+		{"adam" : { namechoices: "Adam, Adam Kalsey",    number: "3022662842" }},
+		{"jose" : { namechoices: "Jose, Jose de Castro",    number: "13022662842" }} 
+					];
+var ContactList = contacts;
 //helper func
 //return string with , seperated contacts
 listNames= function ( theContacts ){
@@ -81,7 +96,7 @@ listOptions=function ( theContacts ){
   for( var contact in theContacts )
   {
 	if (s != '') { s = s + ", " };
-	s = s + contact + " (" + theContacts[ contact ].nameChoices + ")";
+	s = s + contact + " (" + theContacts[ contact ].namechoices + ")";
   }
   return s;
 };
@@ -103,7 +118,7 @@ attendent = function(choice,res, callback){
 		 
 	var choices = new Choices(listOptions( contacts ));	 
 	tropo.ask(choices, 3, false, null, "foo", null, true, say, 5, null);
-	tropo.on("continue", null, "/contact", true);
+	tropo.on("continue", null, "/call", true);
 	
 	res.send(tropowebapi.TropoJSON(tropo));
 	callback();
@@ -112,7 +127,7 @@ attendent = function(choice,res, callback){
 };
 
 // on contact selection.
-app.post('/contact', function(req, res){	
+app.post('/call', function(req, res){	
 	 
 	var tropo = new tropowebapi.TropoWebAPI();	 
 	var contact=req.body.result.actions.interpretation;
@@ -122,7 +137,7 @@ app.post('/contact', function(req, res){
 	tropo.say( "ok, you said " + contact +" .");
 	
 	contact=contact.toLowerCase() // for searching name from contacts array.
-	var c= contacts[contact];
+	var c= ContactList[contact];
 	if (c == undefined){
 		tropo.say("Could not able to find contact information for contact "+contact+", Please try again." );
 	}else{
@@ -199,6 +214,62 @@ getWeather=function(zip, callback){
 	}});
 	
 };
+
+
+// on new contact receive.	
+app.post('/add', function(req, res){	
+	 
+	var tropo = new tropowebapi.TropoWebAPI();	 
+	var contact=req.body;
+	console.log(contact);
+	ContactList.push(contact);
+	 res.send(ContactList)
+	
+});
+
+
+app.post('/contacts', function (req, res) {
+	
+	var index = _.findIndex(contactsList, req.body);
+	console.log('contacts--',contactsList,index);
+	if(index !== -1) {
+		res.json(contactsList);
+	}
+	else {
+		contactsList.push(req.body);
+		jsonfile.writeFile(file, JSON.stringify(contactsList), function (err) {
+
+        if (err) {
+            res.json({'message':'internal error'});
+        }
+        else {
+            res.json(contactsList);
+
+        }
+
+    });
+	}
+
+});
+
+
+
+
+
+app.get('/contacts', function (req, res) {
+
+    jsonfile.readFile(file, function(err, obj) {
+		if(obj){
+			res.json(JSON.parse(obj));
+		}
+		else {
+				res.json([]);
+		}
+
+    });
+
+});
+
 //Server listening port.
 app.listen(3000);
 console.log('Server running on http://0.0.0.0:3000/');
