@@ -17,7 +17,7 @@ var _ = require('underscore');
 
 //Main Contact List.
 var ContactList =[];
-
+var selectedContact="";
 // Define sample contacts
 var contacts = [	{"neelesh": { namechoices: "Neelesh, Nelesh p", number: 	"6697778304" }},
 		{"adam" : { namechoices: "Adam, Adam Kalsey",    number: "3022662842" }},
@@ -86,9 +86,8 @@ app.post('/selection', function(req, res) {
 	if (choice == "1"){
 		weatherReport(res,function(){});
 	}else if (choice == "2"){
-		attendent(choice,res, function(){
-				
-		})
+		tropo.say("Searching for contacts.");	
+		attendent(res, function(){});
 	}else{
 	res.send(tropowebapi.TropoJSON(tropo));
 	}
@@ -122,15 +121,13 @@ listOptions=function ( theContacts ){
   return s;
 };
 					
-attendent = function(choice,res, callback){
-	var tropo = new tropowebapi.TropoWebAPI();
-
-	tropo.say("Searching for contacts.");	
+attendent = function(res, callback){
+	var tropo = new tropowebapi.TropoWebAPI();	
 	//Create event objects
 	var e1 = {"value":"Sorry, I did not hear anything.","event":"timeout"};
     var e2 = {"value":"Sorry, that was not a valid option.","event":"nomatch:1"};
     var e3 = {"value":"Nope, still not a valid response","event":"nomatch:2"};  
-					
+	selectedContact="";			
 		 
     //Create an array of all events
     var e = new Array(e1,e2,e3);
@@ -152,13 +149,44 @@ attendent = function(choice,res, callback){
 app.post('/call', function(req, res){	
 	 
 	var tropo = new tropowebapi.TropoWebAPI();	 
-	var contact=req.body.result.actions.interpretation;
+	selectedContact=req.body.result.actions.interpretation;
 	 
 	//console.log(contact)
 	 
-	tropo.say( "ok, you said " + contact +" .");
+	tropo.say( "ok, you said " + selectedContact +" .");
 	
-	contact=contact.toLowerCase() // for searching name from contacts array.
+	
+	var say = new Say(" to confirm, press 1. For retry, press 2.");
+	var choices = new Choices("1,2");	 
+	 
+	tropo.ask(choices, 3, false, null, "foo", null, true, say, 5, null);	
+	tropo.on("continue", null, "/selectioncontact", true);		
+	
+	res.send(tropowebapi.TropoJSON(tropo));
+	
+});
+//on contact option selection 
+app.post('/selectioncontact', function(req, res) {
+	  
+	var tropo = new tropowebapi.TropoWebAPI();	
+	 
+	console.log(req.body.result);
+	var choice=req.body.result.actions.interpretation;	 
+	tropo.say("Your choice is invalid.");	
+	if (choice == "1"){
+		callcontact(res,function(){});
+	}else if (choice == "2"){			
+		attendent(res, function(){});
+	}else{
+	 res.send(tropowebapi.TropoJSON(tropo));
+	}
+ });
+ 
+// on contact selection.
+callcontact= function(res, callback){	
+	 
+	var tropo = new tropowebapi.TropoWebAPI();		
+	var contact=selectedContact.toLowerCase();	
 	var c=undefined;
 	 for( var i=0;i<ContactList.length;i++) {	  
 	  for( var f in  ContactList[i] ) {	
@@ -185,9 +213,9 @@ app.post('/call', function(req, res){
 	
 	tropo.say( "Goodbye !");
 	res.send(tropowebapi.TropoJSON(tropo));
+	callback();
 	
-});
-
+};
 //
 //For weather report
 //
