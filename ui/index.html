@@ -13,16 +13,24 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 	<style>
+	html{overflow-y: scroll;
+overflow-x: hidden;}
 	#header 
 	{
 		width : 100%;
 		height:100px;
 		background-color : #0076A2;
 	}
-	#header img
+	#header .logo
 	{
 		margin-top:25px;
 		margin-left:150px;
+	}
+	#header .logo2
+	{
+		height:50px;
+		margin-top:25px;
+		margin-right:150px;
 	}
 	.container-fluid
 	{
@@ -38,7 +46,15 @@
   </head>
   <body>
 	<div id="header">
-		<img src="image/logo.png" />
+	<div class="row">
+	<div style="float:left">
+	<img class = "logo" src="image/logo.png" />
+	</div>
+	<div style="float:right">
+	<img class = "logo2" src="http://ciscocloud.github.io/shipped/dist/images/cisco-logo-white.png" />
+	</div>
+	</div>
+		
 	</div>
 	<div class="container-fluid">
 	<div class="row">
@@ -73,63 +89,7 @@
 						</th>
 					</tr>
 				</thead>
-				<tbody id="tbody">
-					<tr>
-						<td>
-							1
-						</td>
-						<td>
-							Adam
-						</td>
-						<td>
-							999999999999
-						</td>
-						<td>
-							Default
-						</td>
-					</tr>
-					<tr class="active">
-						<td>
-							2
-						</td>
-						<td>
-							jason
-						</td>
-						<td>
-							999999999999
-						</td>
-						<td>
-							Approved
-						</td>
-					</tr>
-					<tr class="success">
-						<td>
-							3
-						</td>
-						<td>
-							Neelesh
-						</td>
-						<td>
-							999999999999
-						</td>
-						<td>
-							Declined
-						</td>
-					</tr>
-					<tr class="warning">
-						<td>
-							4
-						</td>
-						<td>
-							TB - Monthly
-						</td>
-						<td>
-							999999999999
-						</td>
-						<td>
-							Pending
-						</td>
-					</tr>
+				<tbody id="tbody">			 
 					 
 				</tbody>
 			</table>
@@ -152,7 +112,7 @@
 				<div class="row">
 			<div class="col-md-8">
 				<div class="form-group">
-					<input type="text" class="form-control" id="txtFirst"  placeholder="Ente first name" maxlength="25"/>
+					<input type="text" class="form-control" id="txtFirst"  placeholder="Enter first name" maxlength="25"/>
 				</div>
 				</div>
 							<div class="col-md-4"><span id="errmsg1"></span></div>
