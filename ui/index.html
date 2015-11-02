@@ -29,6 +29,11 @@
 		width:1100px;
 		padding:20px;
 	}
+	#errmsg, #errmsg1, #errmsg2
+	{
+	margin-left:-20px;
+		color: red;
+	}
 	</style>
   </head>
   <body>
@@ -41,10 +46,10 @@
 			<div class="tabbable" id="tabs-82214">
 				<ul class="nav nav-tabs">
 					<li class="active">
-						<a href="#panel-266101" data-toggle="tab">View User</a>
+						<a href="#panel-266101" data-toggle="tab">View Contact</a>
 					</li>
 					<li >
-						<a href="#panel-769963" data-toggle="tab">Add User</a>
+						<a href="#panel-769963" data-toggle="tab">Add Contact</a>
 					</li>
 				</ul>
 				<div class="tab-content">
@@ -125,20 +130,7 @@
 							Pending
 						</td>
 					</tr>
-					<tr class="danger">
-						<td>he 
-							5
-						</td>
-						<td>
-							TB - Monthly
-						</td>
-						<td>
-							999999999999
-						</td>
-						<td>
-							Call in to confirm
-						</td>
-					</tr>
+					 
 				</tbody>
 			</table>
 		</div>
@@ -150,32 +142,45 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<h3 class="panel-title">
-						Add new user to application
+						Add new contact to application
 					</h3>
 				</div>
 				<div class="panel-body">
 					<div class="row">
 		<div class="col-md-12">
-			<form role="form">
+			<form role="form" id="frmContact">
+				<div class="row">
+			<div class="col-md-8">
+				<div class="form-group">
+					<input type="text" class="form-control" id="txtFirst"  placeholder="Ente first name" maxlength="25"/>
+				</div>
+				</div>
+							<div class="col-md-4"><span id="errmsg1"></span></div>
+				</div>
+				<div class="row">
+			<div class="col-md-8">
+				<div class="form-group">					 
+					 
+					<input type="text" class="form-control" id="txtLast"  placeholder="Enter last name" maxlength="25"/>
+				</div>
+				</div>
+							<div class="col-md-4"><span id="errmsg2"></span></div>
+				</div>
+				<div class="row">
+			<div class="col-md-8">
 				<div class="form-group">
 					 
-					<label for="exampleInputEmail1">
-						Name 
-					</label>
-					<input type="text" class="form-control" id="txtEmail" />
+					<input type="text" class="form-control" id="txtPhone" placeholder="Enter phone number" maxlength="12"/>
 				</div>
-				<div class="form-group">
-					<label for="exampleInputPassword1">
-						Phone Number
-					</label>
-					<input type="text" class="form-control" id="txtPhone" />
 				</div>
-				
+							<div class="col-md-4"><span id="errmsg"></span></div>
+				</div>
 				<button id="addMe" type="submit" class="btn btn-primary btn-large">
 					Add User
 				</button>
 			</form>
 		</div>
+		
 	</div>
 				</div>
 				<div class="panel-footer">
@@ -196,32 +201,116 @@
     <script src="js/scripts.js"></script>
 	<script>
 		$(window).load(function() {
-		function returnhtml()
+		var htmlcode = '';
+		 $.ajax({
+            type: 'GET',
+            url: '/contacts',
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+			success: function(msg){
+				debugger;
+				j = msg.length - 1;
+					for(i=j;i>=0;i--)
+					{
+						console.log(msg[i]);
+						var k = msg[i];
+						for(n in k)
+						{
+							//console.log(k[n].namechoices+"  "+k[n].number);
+							htmlcode += returnhtml(i,k[n].namechoices,k[n].number);
+						}
+					}
+					debugger;
+					$("#tbody").html(htmlcode);
+				},
+				error:function(jqXHR, textStatus, errorThrown){
+					debugger;
+                 alert(textStatus);
+               }
+        });
+		function returnhtml(i,name,number)
 		{
-			return $('<tr><td>123</td><td>'+$("#txtEmail").val()+'</td><td>'+$("#txtPhone").val()+'</td><td>Active</td></tr>');
+			debugger;
+			i = i+1;
+			return '<tr><td>'+i+'</td><td>'+name+'</td><td>'+number+'</td><td>Active</td></tr>';
 		}
 		
+		 function validateForm()
+		 {
+			if($("#txtFirst").val().trim()=="")
+			{
+				$("#errmsg1").html("First name is required").show(1000).fadeOut(5000);
+				return false;	
+			}
+			else if($("#txtLast").val().trim()=="")
+			{
+				$("#errmsg2").html("Last name is required").show(1000).fadeOut(5000);
+				return false;
+			}
+			else if($("#txtPhone").val().trim()=="")
+			{
+				$("#errmsg").html("Phone Number is required").show(1000).fadeOut(5000);
+				return false;
+			}
+			return true;
+		}
 		$("#addMe").click(function(){
-			//ajax call
+		if(!validateForm())
+		{
+			return false;
+		}
+		//ajax call
 			var datavalue ={};
 			var data ={};
-			data.namechoices = $("#txtEmail").val();
+			data.namechoices = $("#txtFirst").val()+", "+$("#txtFirst").val()+" "+$("#txtLast").val();
 			data.number = $("#txtPhone").val();
 			
-			datavalue[$("#txtEmail").val()] = data;
-											
+			datavalue[$("#txtFirst").val()] = data;
+			debugger;								
 			console.log('datavalue---',datavalue);
-			$.ajax({
-				url: "/contacts",
-				data: datavalue,
-				contentType: "application/json",
-				dataType: 'json',
-				type:"POST",
-				success: function(){
-					alert("save");
-				}
-				});
+		
+				
+				 $.ajax({
+            type: 'POST',
+            url: '/contacts',
+            data: JSON.stringify(datavalue),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+			success: function(){
+				debugger;
+					//saves
+				},
+      error:function(jqXHR, textStatus, errorThrown){
+	  debugger;
+                       alert(textStatus);
+                        }
+        });
 		});
+		
+		});
+		
+		$(document).ready(function () {
+		  //called when key is pressed in textbox
+		  $("#txtPhone").keypress(function (e) {
+			 //if the letter is not digit then display error and don't type anything
+			 if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+				//display error message
+				$("#errmsg").html("Numeric Only").show(1000).fadeOut(5000);
+					   return false;
+			}
+		   });
+		   
+		   $("#txtFirst").keypress(function (e) {
+			
+				$("#errmsg1").hide();
+					 
+		   });
+		   
+		   $("#txtLast").keypress(function (e) {
+			
+				$("#errmsg2").hide();
+					
+		   });
 		});
 	</script>
   </body>

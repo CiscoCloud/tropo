@@ -1,4 +1,5 @@
 /**
+* A cisco tropo example with shipped deployment.
  * Showing with the Express framwork http://expressjs.com/
  * Express must be installed for this sample to work
  */
@@ -13,13 +14,34 @@ var jsonfile = require('jsonfile');
 var util = require('util');
 var file = './files/contacts.json';
 var _ = require('underscore');
-var contactsList =[];
-jsonfile.readFile(file, function(err, obj) {
-		console.log('obj',obj);
-		if(obj) {
-				contactsList=JSON.parse(obj);
+
+//Main Contact List.
+var ContactList =[];
+
+// Define sample contacts
+var contacts = [	{"neelesh": { namechoices: "Neelesh, Nelesh p", number: 	"6697778304" }},
+		{"adam" : { namechoices: "Adam, Adam Kalsey",    number: "3022662842" }},
+		{"jose" : { namechoices: "Jose, Jose de Castro",    number: "13022662842" }} 
+					];
+ 
+
+//Load all Contactsfrom json file on app load
+jsonfile.readFile(file, function(err, obj) {		
+		if(obj) {		
+				ContactList=JSON.parse(obj);
+		}else{
+			//Write Static contacts as samples, pls comment this section if not required.
+			ContactList=contacts;
+			jsonfile.writeFile(file, JSON.stringify(ContactList), function (err) {
+					if (err) {
+						console.log('err',err);
+					}	
+				});
+			 
 		}
+		console.log('obj',ContactList);
     });
+	
 
 
 app.use(serveStatic(__dirname + "/ui"));
@@ -72,20 +94,16 @@ app.post('/selection', function(req, res) {
 	}
  });
 	
-// define the list of contacts
-var contacts = [	{"neelesh": { namechoices: "Neelesh, Nelesh p", number: 	"6697778304" }},
-		{"adam" : { namechoices: "Adam, Adam Kalsey",    number: "3022662842" }},
-		{"jose" : { namechoices: "Jose, Jose de Castro",    number: "13022662842" }} 
-					];
-var ContactList = contacts;
 //helper func
 //return string with , seperated contacts
 listNames= function ( theContacts ){
   var s = '';
-  for( var contact in theContacts )
-  {
-	if (s != '') { s = s + ", " };
-	s = s + contact;
+  for( var i=0;i<theContacts.length;i++) {
+	  
+	  for( var f in theContacts[i] ) {		   
+		if (s != '') { s = s + ", " };
+		s = s + f;
+	  }
   }
   return s;
 };
@@ -93,11 +111,14 @@ listNames= function ( theContacts ){
 //for Nomae choice object
 listOptions=function ( theContacts ){
   var s ='';
-  for( var contact in theContacts )
-  {
-	if (s != '') { s = s + ", " };
-	s = s + contact + " (" + theContacts[ contact ].namechoices + ")";
-  }
+   for( var i=0;i<theContacts.length;i++) {   
+ 
+	 for( var f in theContacts[i] ) {	
+	
+		if (s != '') { s = s + ", " };
+		s = s + f + " (" + theContacts[i][f].namechoices + ")";
+	  }
+   }
   return s;
 };
 					
@@ -108,15 +129,16 @@ attendent = function(choice,res, callback){
 	//Create event objects
 	var e1 = {"value":"Sorry, I did not hear anything.","event":"timeout"};
     var e2 = {"value":"Sorry, that was not a valid option.","event":"nomatch:1"};
-    var e3 = {"value":"Nope, still not a valid response","event":"nomatch:2"};
-    
+    var e3 = {"value":"Nope, still not a valid response","event":"nomatch:2"};  
+					
+		 
     //Create an array of all events
     var e = new Array(e1,e2,e3);
        
 	// Demonstrates how to use the base Tropo action classes.
 	var say = new Say("Who would you like to call?  Just say " + listNames( contacts ), null, e, null, null, null);
 		 
-	var choices = new Choices(listOptions( contacts ));	 
+	var choices = new Choices(listOptions( ContactList ));	 
 	tropo.ask(choices, 3, false, null, "foo", null, true, say, 5, null);
 	tropo.on("continue", null, "/call", true);
 	
@@ -137,7 +159,14 @@ app.post('/call', function(req, res){
 	tropo.say( "ok, you said " + contact +" .");
 	
 	contact=contact.toLowerCase() // for searching name from contacts array.
-	var c= ContactList[contact];
+	var c=undefined;
+	 for( var i=0;i<ContactList.length;i++) {	  
+	  for( var f in  ContactList[i] ) {	
+		  if (f.toLowerCase()==contact){
+			  c=ContactList[i][f]
+		  }
+	  }
+	 }
 	if (c == undefined){
 		tropo.say("Could not able to find contact information for contact "+contact+", Please try again." );
 	}else{
@@ -146,7 +175,7 @@ app.post('/call', function(req, res){
 		//added ring while answered by other person.
 		 var say1= new Say("http://www.phono.com/audio/holdmusic.mp3");
 		 var on = new On("ring", null, null, false, say1);
-		 
+		
 		//transfer call to the requested contact.
 		tropo.transfer(c.number, false, null, null, {'x-caller-name' : contact}, null, on, true, '#', 60.0);
 		 //sms
@@ -179,6 +208,7 @@ weatherReport=function(res,callback){
 
 //on entering 5 digit zip code.
 app.post('/answer', function(req, res){	
+
 	 var tropo = new tropowebapi.TropoWebAPI();
 	//console.log(req.body['result']['actions']['interpretation'])
 	var zip=req.body.result.actions.interpretation;
@@ -215,35 +245,24 @@ getWeather=function(zip, callback){
 	
 };
 
-
-// on new contact receive.	
-app.post('/add', function(req, res){	
-	 
-	var tropo = new tropowebapi.TropoWebAPI();	 
-	var contact=req.body;
-	console.log(contact);
-	ContactList.push(contact);
-	 res.send(ContactList)
-	
-});
-
-
+ 
 app.post('/contacts', function (req, res) {
 	
-	var index = _.findIndex(contactsList, req.body);
-	console.log('contacts--',contactsList,index);
+	var index = _.findIndex(ContactList, req.body);
+	console.log('POST: Adding Contact - ', req.body);
 	if(index !== -1) {
-		res.json(contactsList);
+		res.json(ContactList);
 	}
 	else {
-		contactsList.push(req.body);
-		jsonfile.writeFile(file, JSON.stringify(contactsList), function (err) {
+		ContactList.push(req.body);
+		jsonfile.writeFile(file, JSON.stringify(ContactList), function (err) {
 
         if (err) {
+			console.log("Error adding Contact ",err);
             res.json({'message':'internal error'});
         }
         else {
-            res.json(contactsList);
+            res.json(ContactList);
 
         }
 
@@ -263,6 +282,7 @@ app.get('/contacts', function (req, res) {
 			res.json(JSON.parse(obj));
 		}
 		else {
+				console.log("Error getting Contact ",err);
 				res.json([]);
 		}
 
