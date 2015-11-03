@@ -19,10 +19,10 @@ var _ = require('underscore');
 var ContactList =[];
 var selectedContact="";
 // Define sample contacts
-var contacts = [	{"neelesh": { namechoices: "Neelesh, Nelesh p", number: 	"6697778304" }},
-		{"adam" : { namechoices: "Adam, Adam Kalsey",    number: "3022662842" }},
-		{"jose" : { namechoices: "Jose, Jose de Castro",    number: "13022662842" }} 
-					];
+var contacts = [	
+					{"Echo": { namechoices: "Echo, Echo Test", 	number:	"8001101101" }}
+					
+				];
  
 
 //Load all Contactsfrom json file on app load
@@ -133,7 +133,7 @@ attendent = function(res, callback){
     var e = new Array(e1,e2,e3);
        
 	// Demonstrates how to use the base Tropo action classes.
-	var say = new Say("Who would you like to call?  Just say " + listNames( contacts ), null, e, null, null, null);
+	var say = new Say("Who would you like to call?  Just say echo", null, e, null, null, null);
 		 
 	var choices = new Choices(listOptions( ContactList ));	 
 	tropo.ask(choices, 3, false, null, "foo", null, true, say, 5, null);
