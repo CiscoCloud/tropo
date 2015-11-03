@@ -20,7 +20,7 @@ var ContactList =[];
 var selectedContact="";
 // Define sample contacts
 var contacts = [	
-					{"Echo": { namechoices: "Echo, Echo Test", 	number:	"9093900003" }}
+					{"echo": { namechoices: "Echo, Echo Test", 	number:	"9093900003" }}
 					
 				];
  
@@ -133,7 +133,7 @@ attendent = function(res, callback){
     var e = new Array(e1,e2,e3);
        
 	// Demonstrates how to use the base Tropo action classes.
-	var say = new Say("Who would you like to call?  Just say echo", null, e, null, null, null);
+	var say = new Say("Who would you like to call?  Just say name eg. echo", null, e, null, null, null);
 		 
 	var choices = new Choices(listOptions( ContactList ));	 
 	tropo.ask(choices, 3, false, null, "foo", null, true, say, 5, null);
@@ -173,10 +173,10 @@ app.post('/selectioncontact', function(req, res) {
 	console.log(req.body.result);
 	var choice=req.body.result.actions.interpretation;	 
 	tropo.say("Your choice is invalid.");	
-	if (choice == "1"){
-		callcontact(res,function(){});
-	}else if (choice == "2"){			
+	if (choice == "2"){
 		attendent(res, function(){});
+	}else if (selectedContact = ""){		
+		callcontact(res,function(){});			
 	}else{
 	 res.send(tropowebapi.TropoJSON(tropo));
 	}
@@ -196,7 +196,9 @@ callcontact= function(res, callback){
 	  }
 	 }
 	if (c == undefined){
-		tropo.say("Could not able to find contact information for contact "+contact+", Please try again." );
+		tropo.say("Could not able to find contact information for contact "+contact+", Please try again." );	
+		selectedContact="";		
+		tropo.on("continue", null, "/selectioncontact", true);		
 	}else{
 		 tropo.say("Please hold while I transfer you. Call forwarding will only works if your account is activated for call forwarding feature." );
 		 
