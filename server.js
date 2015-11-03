@@ -20,7 +20,7 @@ var ContactList =[];
 var selectedContact="";
 // Define sample contacts
 var contacts = [	
-					{"Echo": { namechoices: "Echo, Echo Test", 	number:	"8001101101" }}
+					{"Echo": { namechoices: "Echo, Echo Test", 	number:	"9093900003" }}
 					
 				];
  
