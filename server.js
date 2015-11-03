@@ -173,10 +173,10 @@ app.post('/selectioncontact', function(req, res) {
 	console.log(req.body.result);
 	var choice=req.body.result.actions.interpretation;	 
 	tropo.say("Your choice is invalid.");	
-	if (choice == "2"){
-		attendent(res, function(){});
-	}else if (selectedContact = ""){		
-		callcontact(res,function(){});			
+	if (choice == "1"){
+		callcontact(res,function(){});		
+	}else if (choice == "2"){		
+		attendent(res, function(){});	
 	}else{
 	 res.send(tropowebapi.TropoJSON(tropo));
 	}
