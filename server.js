@@ -133,7 +133,7 @@ attendent = function(res, callback){
     var e = new Array(e1,e2,e3);
        
 	// Demonstrates how to use the base Tropo action classes.
-	var say = new Say("Who would you like to call?  Just say name eg. echo", null, e, null, null, null);
+	var say = new Say("Who would you like to call?  Just say name, like echo", null, e, null, null, null);
 		 
 	var choices = new Choices(listOptions( ContactList ));	 
 	tropo.ask(choices, 3, false, null, "foo", null, true, say, 5, null);
@@ -196,9 +196,7 @@ callcontact= function(res, callback){
 	  }
 	 }
 	if (c == undefined){
-		tropo.say("Could not able to find contact information for contact "+contact+", Please try again." );	
-		selectedContact="";		
-		tropo.on("continue", null, "/selectioncontact", true);		
+		tropo.say("Could not able to find contact information for contact "+contact+", Please try again." );			 	
 	}else{
 		 tropo.say("Please hold while I transfer you. Call forwarding will only works if your account is activated for call forwarding feature." );
 		 
